@@ -8,6 +8,7 @@ Features:
 - Direct speech patterns
 - Backward compatible API
 """
+
 from __future__ import annotations
 
 import re
@@ -43,11 +44,28 @@ class Sentence:
         self.stop = stop
 
     def __repr__(self) -> str:
-        return f"Sentence('{self.text[:30]}...')" if len(self.text) > 30 else f"Sentence('{self.text}')"
+        return (
+            f"Sentence('{self.text[:30]}...')"
+            if len(self.text) > 30
+            else f"Sentence('{self.text}')"
+        )
 
 
 # Backwards compatibility alias
-Substring = Sentence
+class Substring:
+    """Backwards compatibility class for old tests."""
+
+    def __init__(self, start: int, stop: int, text: str) -> None:
+        self.start = start
+        self.stop = stop
+        self.text = text
+
+    def __repr__(self) -> str:
+        return (
+            f"Substring('{self.text[:30]}...')"
+            if len(self.text) > 30
+            else f"Substring('{self.text}')"
+        )
 
 
 def tokenize(text: str, use_enhanced: bool = True) -> list[Token]:
@@ -141,7 +159,7 @@ def _simple_sentenize(text: str) -> list[Sentence]:
 
         if boundary < len(text):
             next_char = text[boundary]
-            if next_char.isupper() or next_char in '«"\'(':
+            if next_char.isupper() or next_char in "«\"'(":
                 # This is a sentence boundary
                 sentence_text = text[current_start:boundary].strip()
                 if sentence_text:
@@ -189,9 +207,9 @@ def get_segmentation_quality(text: str) -> dict[str, Any]:
             {
                 "enhanced_sentences": len(enhanced_sents),
                 "quality_score": quality_score,
-                "improvement": len(enhanced_sents) / len(simple_sents)
-                if len(simple_sents) > 0
-                else 1.0,
+                "improvement": (
+                    len(enhanced_sents) / len(simple_sents) if len(simple_sents) > 0 else 1.0
+                ),
             }
         )
 

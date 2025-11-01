@@ -114,9 +114,9 @@ class TestSentenizeFunctionality:
         result = list(sentenize(text))
 
         assert all(isinstance(s, Substring) for s in result)
-        assert all(hasattr(s, 'start') for s in result)
-        assert all(hasattr(s, 'stop') for s in result)
-        assert all(hasattr(s, 'text') for s in result)
+        assert all(hasattr(s, "start") for s in result)
+        assert all(hasattr(s, "stop") for s in result)
+        assert all(hasattr(s, "text") for s in result)
 
 
 class TestTokenizeFunctionality:
@@ -189,9 +189,9 @@ class TestTokenizeFunctionality:
         result = list(tokenize(text))
 
         assert all(isinstance(t, Substring) for t in result)
-        assert all(hasattr(t, 'start') for t in result)
-        assert all(hasattr(t, 'stop') for t in result)
-        assert all(hasattr(t, 'text') for t in result)
+        assert all(hasattr(t, "start") for t in result)
+        assert all(hasattr(t, "stop") for t in result)
+        assert all(hasattr(t, "text") for t in result)
 
 
 class TestDataFiles:
@@ -202,13 +202,13 @@ class TestDataFiles:
         import mawo_razdel
 
         module_path = Path(mawo_razdel.__file__).parent
-        data_path = module_path / 'data'
+        data_path = module_path / "data"
 
         assert data_path.exists(), f"Data directory not found at {data_path}"
         assert data_path.is_dir(), f"Data path is not a directory: {data_path}"
 
         # Проверяем наличие основных LZMA файлов
-        lzma_files = list(data_path.glob('*.lzma'))
+        lzma_files = list(data_path.glob("*.lzma"))
         assert len(lzma_files) > 0, "No LZMA corpus files found"
 
     def test_corpus_files_not_empty(self):
@@ -216,9 +216,9 @@ class TestDataFiles:
         import mawo_razdel
 
         module_path = Path(mawo_razdel.__file__).parent
-        data_path = module_path / 'data'
+        data_path = module_path / "data"
 
-        lzma_files = list(data_path.glob('*.lzma'))
+        lzma_files = list(data_path.glob("*.lzma"))
         for lzma_file in lzma_files:
             assert lzma_file.stat().st_size > 10_000, f"Corpus file too small: {lzma_file.name}"
 
@@ -232,9 +232,9 @@ class TestSubstringClass:
 
         sub = Substring(0, 5, "Привет")
 
-        assert hasattr(sub, 'start')
-        assert hasattr(sub, 'stop')
-        assert hasattr(sub, 'text')
+        assert hasattr(sub, "start")
+        assert hasattr(sub, "stop")
+        assert hasattr(sub, "text")
         assert sub.start == 0
         assert sub.stop == 5
         assert sub.text == "Привет"
@@ -248,8 +248,10 @@ class TestSubstringClass:
 
         for substring in result:
             # Проверяем, что текст соответствует позициям
-            extracted = text[substring.start:substring.stop]
-            assert extracted == substring.text, f"Position mismatch: {extracted} != {substring.text}"
+            extracted = text[substring.start : substring.stop]
+            assert (
+                extracted == substring.text
+            ), f"Position mismatch: {extracted} != {substring.text}"
 
 
 class TestEdgeCases:
@@ -343,5 +345,5 @@ class TestConsistency:
             assert r1.text == r2.text
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v', '--tb=short'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "--tb=short"])
