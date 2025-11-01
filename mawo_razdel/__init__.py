@@ -237,7 +237,7 @@ def get_segmentation_quality(text: str) -> dict[str, Any]:
     return quality_info
 
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __author__ = "MAWO Team (based on Razdel by Alexander Kukushkin)"
 
 __all__ = [

@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2025-11-01
+
+### Fixed
+- Полная совместимость с Python 3.9+ (убраны variable-width look-behind regex)
+- Обратная совместимость API: sentenize и tokenize возвращают Substring объекты
+- Исправлены позиции start/stop в токенах и предложениях
+- Переписана логика поиска границ предложений без использования сложных regex
+- Все 29 тестов успешно проходят на Python 3.9-3.13
+
+### Changed
+- Улучшена логика блокировки границ предложений
+- Оптимизирована обработка аббревиатур, инициалов и десятичных чисел
+
 ## [1.0.0] - 2025-11-01
 
 ### Added
