@@ -68,7 +68,7 @@ class Substring:
         )
 
 
-def tokenize(text: str, use_enhanced: bool = True) -> list[Token]:
+def tokenize(text: str, use_enhanced: bool = True) -> list[Substring]:
     """Tokenize Russian text into tokens.
 
     Args:
@@ -76,14 +76,14 @@ def tokenize(text: str, use_enhanced: bool = True) -> list[Token]:
         use_enhanced: Use enhanced patterns if available
 
     Returns:
-        List of Token objects
+        List of Substring objects (tokens)
     """
     # Simple but effective tokenization with Russian support
     pattern = r"\b[\w\u0400-\u04FF]+\b|\S"
 
-    tokens: list[Token] = []
+    tokens: list[Substring] = []
     for match in re.finditer(pattern, text):
-        tokens.append(Token(match.group(), match.start(), match.end()))
+        tokens.append(Substring(match.start(), match.end(), match.group()))
 
     return tokens
 
@@ -105,7 +105,7 @@ def sentenize(text: str, use_enhanced: bool = True) -> list[Sentence]:
     return _simple_sentenize(text)
 
 
-def _enhanced_sentenize(text: str) -> list[Sentence]:
+def _enhanced_sentenize(text: str) -> list[Substring]:
     """Enhanced sentence segmentation with SynTagRus patterns.
 
     Handles:
@@ -121,7 +121,8 @@ def _enhanced_sentenize(text: str) -> list[Sentence]:
 
     if not boundaries:
         # No boundaries found, return whole text
-        return [Sentence(text.strip(), 0, len(text))]
+        clean_text = text.strip()
+        return [Substring(0, len(clean_text), clean_text)]
 
     # Split by boundaries
     sentences = []
@@ -130,19 +131,26 @@ def _enhanced_sentenize(text: str) -> list[Sentence]:
     for boundary in boundaries:
         sentence_text = text[start:boundary].strip()
         if sentence_text:
-            sentences.append(Sentence(sentence_text, start, boundary))
+            # Find actual start position (skip leading whitespace)
+            actual_start = start + len(text[start:boundary]) - len(text[start:boundary].lstrip())
+            sentences.append(
+                Substring(actual_start, actual_start + len(sentence_text), sentence_text)
+            )
         start = boundary
 
     # Last sentence
     if start < len(text):
         sentence_text = text[start:].strip()
         if sentence_text:
-            sentences.append(Sentence(sentence_text, start, len(text)))
+            actual_start = start + len(text[start:]) - len(text[start:].lstrip())
+            sentences.append(
+                Substring(actual_start, actual_start + len(sentence_text), sentence_text)
+            )
 
     return sentences
 
 
-def _simple_sentenize(text: str) -> list[Sentence]:
+def _simple_sentenize(text: str) -> list[Substring]:
     """Simple sentence segmentation (fallback).
 
     Basic pattern: split on [.!?] followed by space and capital letter.
@@ -163,18 +171,31 @@ def _simple_sentenize(text: str) -> list[Sentence]:
                 # This is a sentence boundary
                 sentence_text = text[current_start:boundary].strip()
                 if sentence_text:
-                    sentences.append(Sentence(sentence_text, current_start, boundary))
+                    actual_start = (
+                        current_start
+                        + len(text[current_start:boundary])
+                        - len(text[current_start:boundary].lstrip())
+                    )
+                    sentences.append(
+                        Substring(actual_start, actual_start + len(sentence_text), sentence_text)
+                    )
                 current_start = boundary
 
     # Last sentence
     if current_start < len(text):
         sentence_text = text[current_start:].strip()
         if sentence_text:
-            sentences.append(Sentence(sentence_text, current_start, len(text)))
+            actual_start = (
+                current_start + len(text[current_start:]) - len(text[current_start:].lstrip())
+            )
+            sentences.append(
+                Substring(actual_start, actual_start + len(sentence_text), sentence_text)
+            )
 
     # If no sentences found, return whole text
     if not sentences:
-        sentences = [Sentence(text.strip(), 0, len(text))]
+        clean_text = text.strip()
+        sentences = [Substring(0, len(clean_text), clean_text)]
 
     return sentences
 
