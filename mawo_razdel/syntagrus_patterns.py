@@ -273,15 +273,36 @@ class SynTagRusPatterns:
         """
         boundaries = []
 
-        # Apply rules in priority order
-        for rule in sorted(self.rules, key=lambda r: r.priority, reverse=True):
-            for match in rule.pattern.finditer(text):
-                pos = match.end()
+        # Find all potential sentence endings
+        for match in re.finditer(r"[.!?]+", text):
+            pos = match.end()
 
-                if rule.is_boundary:
-                    # Check if not blocked by higher priority rules
-                    if not self._is_blocked_boundary(text, pos):
-                        boundaries.append(pos)
+            # Skip if at end of text
+            if pos >= len(text):
+                continue
+
+            # Check what comes after
+            remaining = text[pos:]
+
+            # Check if this is a valid boundary
+            is_valid_boundary = False
+
+            # Case 1: Followed by whitespace and capital letter
+            if re.match(r"\s+[А-ЯЁ«\"\'(]", remaining):
+                is_valid_boundary = True
+
+            # Case 2: Followed by paragraph break
+            elif re.match(r"\s*\n\s*\n", remaining):
+                is_valid_boundary = True
+
+            # Case 3: Question or exclamation (even without capital)
+            elif match.group() in ["!", "?", "!!", "??", "!?", "?!"]:
+                if re.match(r"\s+", remaining):
+                    is_valid_boundary = True
+
+            # Check if boundary is blocked by high-priority rules
+            if is_valid_boundary and not self._is_blocked_boundary(text, pos):
+                boundaries.append(pos)
 
         # Sort and deduplicate
         boundaries = sorted(set(boundaries))
