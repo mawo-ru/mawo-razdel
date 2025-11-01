@@ -1,0 +1,8 @@
+{
+  "source": "mawo_pymorphy3/dicts_ru",
+  "version": "0.92",
+  "revision": "417260",
+  "compiled_at": "2025-09-15T06:52:07",
+  "lexemes_count": 391845,
+  "path": "/home/xopoi/russian_llm/fine_tuning/data/local_libs/mawo_pymorphy3/dictionaries"
+}
