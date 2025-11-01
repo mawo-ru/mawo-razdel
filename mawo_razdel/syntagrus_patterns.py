@@ -298,18 +298,40 @@ class SynTagRusPatterns:
         Returns:
             True if boundary is blocked
         """
-        # Check for abbreviation
-        if self.is_abbreviation(text, pos - 1):
-            return True
+        # Check for abbreviation (точка после аббревиатуры)
+        if pos > 0 and text[pos - 1] == ".":
+            if self.is_abbreviation(text, pos - 1):
+                return True
 
-        # Check for initials
+        # Check for initials (А. С. Пушкин)
         if self.is_initials_context(text, pos):
             return True
 
-        # Check for decimal number
-        if pos > 0 and pos < len(text):
-            if text[pos - 1].isdigit() and text[pos].isdigit():
+        # Check for decimal number (3.14)
+        if pos > 1 and pos < len(text):
+            before_char = text[pos - 2] if pos >= 2 else ""
+            dot_char = text[pos - 1]
+            after_char = text[pos] if pos < len(text) else ""
+
+            # Decimal number pattern: digit + . + digit
+            if before_char.isdigit() and dot_char == "." and after_char.isdigit():
                 return True
+
+        # Check for ellipsis (...)
+        if pos >= 3:
+            if text[pos - 3 : pos] == "...":
+                return True
+
+        # Check for direct speech continuation: - сказал он. -
+        if pos > 10:
+            context = text[max(0, pos - 30) : min(len(text), pos + 10)]
+            for verb in self.SPEECH_VERBS:
+                if verb in context.lower():
+                    # Check for pattern: . - word
+                    if pos < len(text) - 3:
+                        after = text[pos : pos + 3]
+                        if after.strip().startswith("-") or after.strip().startswith("—"):
+                            return True
 
         return False
 
