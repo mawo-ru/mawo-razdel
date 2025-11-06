@@ -55,162 +55,140 @@ print("=" * 80)
 results = []
 
 # Десятичные числа
-results.append(test_case(
-    "Десятичное число (точка)",
-    "Число π ≈ 3.14159",
-    rtokenize, tokenize,
-    verbose=True
-))
+results.append(
+    test_case("Десятичное число (точка)", "Число π ≈ 3.14159", rtokenize, tokenize, verbose=True)
+)
 
-results.append(test_case(
-    "Десятичное число (запятая)",
-    "Цена 3,50 руб.",
-    rtokenize, tokenize,
-    verbose=True
-))
+results.append(
+    test_case("Десятичное число (запятая)", "Цена 3,50 руб.", rtokenize, tokenize, verbose=True)
+)
 
 # Дроби
-results.append(test_case(
-    "Дробь",
-    "Половина - это 1/2",
-    rtokenize, tokenize,
-    verbose=True
-))
+results.append(test_case("Дробь", "Половина - это 1/2", rtokenize, tokenize, verbose=True))
 
 # Процент
-results.append(test_case(
-    "Процент",
-    "Рост составил 95.5%",
-    rtokenize, tokenize,
-    verbose=True
-))
+results.append(test_case("Процент", "Рост составил 95.5%", rtokenize, tokenize, verbose=True))
 
 # Диапазоны
-results.append(test_case(
-    "Диапазон годов",
-    "Период 1995-1999 гг.",
-    rtokenize, tokenize,
-    verbose=True
-))
+results.append(
+    test_case("Диапазон годов", "Период 1995-1999 гг.", rtokenize, tokenize, verbose=True)
+)
 
 # Время
-results.append(test_case(
-    "Время",
-    "Встреча в 10:30",
-    rtokenize, tokenize,
-    verbose=True
-))
+results.append(test_case("Время", "Встреча в 10:30", rtokenize, tokenize, verbose=True))
 
 print("\n" + "=" * 80)
 print("ТЕСТЫ СЕГМЕНТАЦИИ")
 print("=" * 80)
 
 # Аббревиатуры
-results.append(test_case(
-    "Год (г.)",
-    "Он родился в 1799 г. в Москве.",
-    rsentenize, sentenize
-))
+results.append(test_case("Год (г.)", "Он родился в 1799 г. в Москве.", rsentenize, sentenize))
 
-results.append(test_case(
-    "Инициалы",
-    "А. С. Пушкин - великий русский поэт.",
-    rsentenize, sentenize
-))
+results.append(test_case("Инициалы", "А. С. Пушкин - великий русский поэт.", rsentenize, sentenize))
 
-results.append(test_case(
-    "Адрес",
-    "Москва, ул. Тверская, д. 1. XXI век.",
-    rsentenize, sentenize,
-    verbose=True
-))
+results.append(
+    test_case("Адрес", "Москва, ул. Тверская, д. 1. XXI век.", rsentenize, sentenize, verbose=True)
+)
 
-results.append(test_case(
-    "Комплексный текст",
-    """Москва, ул. Тверская, д. 1. XXI век.
+results.append(
+    test_case(
+        "Комплексный текст",
+        """Москва, ул. Тверская, д. 1. XXI век.
 А. С. Пушкин родился в 1799 г. в Москве.""",
-    rsentenize, sentenize,
-    verbose=True
-))
+        rsentenize,
+        sentenize,
+        verbose=True,
+    )
+)
 
 # Сложные случаи
-results.append(test_case(
-    "Город + название",
-    "Я живу в г. Москва с 2020 г. Здесь хорошо.",
-    rsentenize, sentenize,
-    verbose=True
-))
+results.append(
+    test_case(
+        "Город + название",
+        "Я живу в г. Москва с 2020 г. Здесь хорошо.",
+        rsentenize,
+        sentenize,
+        verbose=True,
+    )
+)
 
-results.append(test_case(
-    "Профессор",
-    "Лекцию читал проф. Иванов из МГУ. Было интересно.",
-    rsentenize, sentenize,
-    verbose=True
-))
+results.append(
+    test_case(
+        "Профессор",
+        "Лекцию читал проф. Иванов из МГУ. Было интересно.",
+        rsentenize,
+        sentenize,
+        verbose=True,
+    )
+)
 
-results.append(test_case(
-    "Несколько аббревиатур",
-    "Адрес: г. Москва, ул. Тверская, д. 5, кв. 10.",
-    rsentenize, sentenize,
-    verbose=True
-))
+results.append(
+    test_case(
+        "Несколько аббревиатур",
+        "Адрес: г. Москва, ул. Тверская, д. 5, кв. 10.",
+        rsentenize,
+        sentenize,
+        verbose=True,
+    )
+)
 
-results.append(test_case(
-    "Век римскими цифрами",
-    "В XX в. произошло много событий. В XXI в. тоже.",
-    rsentenize, sentenize,
-    verbose=True
-))
+results.append(
+    test_case(
+        "Век римскими цифрами",
+        "В XX в. произошло много событий. В XXI в. тоже.",
+        rsentenize,
+        sentenize,
+        verbose=True,
+    )
+)
 
-results.append(test_case(
-    "Время с аббревиатурой",
-    "Встреча в 10 ч. 30 мин. Не опаздывайте.",
-    rsentenize, sentenize,
-    verbose=True
-))
+results.append(
+    test_case(
+        "Время с аббревиатурой",
+        "Встреча в 10 ч. 30 мин. Не опаздывайте.",
+        rsentenize,
+        sentenize,
+        verbose=True,
+    )
+)
 
-results.append(test_case(
-    "Деньги",
-    "Цена 100 руб. 50 коп. за штуку. Дешево.",
-    rsentenize, sentenize,
-    verbose=True
-))
+results.append(
+    test_case(
+        "Деньги", "Цена 100 руб. 50 коп. за штуку. Дешево.", rsentenize, sentenize, verbose=True
+    )
+)
 
 # Edge cases
-results.append(test_case(
-    "Точка в конце строки",
-    "Это предложение.",
-    rsentenize, sentenize
-))
+results.append(test_case("Точка в конце строки", "Это предложение.", rsentenize, sentenize))
 
-results.append(test_case(
-    "Множественные точки",
-    "Первое. Второе. Третье.",
-    rsentenize, sentenize
-))
+results.append(test_case("Множественные точки", "Первое. Второе. Третье.", rsentenize, sentenize))
 
-results.append(test_case(
-    "Восклицательный знак",
-    "Привет! Как дела? Всё хорошо.",
-    rsentenize, sentenize
-))
+results.append(
+    test_case("Восклицательный знак", "Привет! Как дела? Всё хорошо.", rsentenize, sentenize)
+)
 
-results.append(test_case(
-    "Многострочный текст",
-    """Первое предложение.
+results.append(
+    test_case(
+        "Многострочный текст",
+        """Первое предложение.
 
 Второе предложение после пустой строки.""",
-    rsentenize, sentenize,
-    verbose=True
-))
+        rsentenize,
+        sentenize,
+        verbose=True,
+    )
+)
 
 # Научный текст
-results.append(test_case(
-    "Научный текст",
-    "Согласно исследованию проф. Петрова и др., температура составила 25.5°C. Это важный результат.",
-    rsentenize, sentenize,
-    verbose=True
-))
+results.append(
+    test_case(
+        "Научный текст",
+        "Согласно исследованию проф. Петрова и др., температура составила 25.5°C. Это важный результат.",
+        rsentenize,
+        sentenize,
+        verbose=True,
+    )
+)
 
 print("\n" + "=" * 80)
 print("ИТОГОВАЯ СТАТИСТИКА")

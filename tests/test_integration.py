@@ -249,9 +249,9 @@ class TestSubstringClass:
         for substring in result:
             # Проверяем, что текст соответствует позициям
             extracted = text[substring.start : substring.stop]
-            assert extracted == substring.text, (
-                f"Position mismatch: {extracted} != {substring.text}"
-            )
+            assert (
+                extracted == substring.text
+            ), f"Position mismatch: {extracted} != {substring.text}"
 
 
 class TestEdgeCases:
