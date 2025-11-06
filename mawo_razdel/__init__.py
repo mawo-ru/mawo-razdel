@@ -69,21 +69,47 @@ class Substring:
 
 
 def tokenize(text: str, use_enhanced: bool = True) -> list[Substring]:
-    """Tokenize Russian text into tokens.
+    """Токенизация русского текста.
+
+    Улучшенная токенизация с правильной обработкой:
+    - Десятичных чисел (3.14, 3,14)
+    - Процентов (95.5%)
+    - Диапазонов (1995-1999, 10:30-11:00)
+    - Дробей (1/2, 3/4)
+    - Телефонов, ID и т.д.
 
     Args:
-        text: Text to tokenize
-        use_enhanced: Use enhanced patterns if available
+        text: Текст для токенизации
+        use_enhanced: Использовать улучшенные паттерны
 
     Returns:
-        List of Substring objects (tokens)
+        Список объектов Substring (токенов)
     """
-    # Simple but effective tokenization with Russian support
-    pattern = r"\b[\w\u0400-\u04FF]+\b|\S"
+    # Улучшенный паттерн на основе современных практик NLP (2024-2025)
+    # Сохраняет целостность чисел при обработке русского текста
+    pattern = r"""
+        # Десятичные числа с точкой или запятой (3.14159 или 3,14159)
+        \d+[.,]\d+
+        # Диапазоны и временные интервалы (1995-1999, 10:30-11:00)
+        |\d+[-:]\d+(?:[-:]\d+)*
+        # Дроби (1/2, 3/4)
+        |\d+/\d+
+        # Проценты (с числом)
+        |\d+\s*%
+        # Обычные числа
+        |\d+
+        # Русские и латинские слова (включая ё)
+        |[\w\u0400-\u04FF]+
+        # Любой другой непробельный символ
+        |\S
+    """
 
     tokens: list[Substring] = []
-    for match in re.finditer(pattern, text):
-        tokens.append(Substring(match.start(), match.end(), match.group()))
+    for match in re.finditer(pattern, text, re.VERBOSE | re.UNICODE):
+        token_text = match.group()
+        # Пропускаем чистые пробелы (не должно совпадать, но проверяем)
+        if token_text.strip():
+            tokens.append(Substring(match.start(), match.end(), token_text))
 
     return tokens
 

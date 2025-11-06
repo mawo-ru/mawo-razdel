@@ -249,9 +249,9 @@ class TestSubstringClass:
         for substring in result:
             # Проверяем, что текст соответствует позициям
             extracted = text[substring.start : substring.stop]
-            assert (
-                extracted == substring.text
-            ), f"Position mismatch: {extracted} != {substring.text}"
+            assert extracted == substring.text, (
+                f"Position mismatch: {extracted} != {substring.text}"
+            )
 
 
 class TestEdgeCases:
@@ -327,7 +327,8 @@ class TestConsistency:
         result2 = list(sentenize(text))
 
         assert len(result1) == len(result2)
-        for r1, r2 in zip(result1, result2, strict=False):
+        # noqa: B905 - Python 3.9 не поддерживает strict= в zip()
+        for r1, r2 in zip(result1, result2):  # noqa: B905
             assert r1.text == r2.text
             assert r1.start == r2.start
             assert r1.stop == r2.stop
@@ -341,7 +342,8 @@ class TestConsistency:
         result2 = list(tokenize(text))
 
         assert len(result1) == len(result2)
-        for r1, r2 in zip(result1, result2, strict=False):
+        # noqa: B905 - Python 3.9 не поддерживает strict= в zip()
+        for r1, r2 in zip(result1, result2):  # noqa: B905
             assert r1.text == r2.text
 
 
