@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mawo-razdel"
-version = "1.0.2"
+version = "1.0.3"
 description = "Продвинутая токенизация для русского языка с SynTagRus паттернами и +25% точностью"
 readme = "README.md"
 requires-python = ">=3.10"
