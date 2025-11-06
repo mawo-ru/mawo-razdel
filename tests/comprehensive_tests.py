@@ -14,7 +14,8 @@ if __name__ == "__main__":
     project_root = Path(__file__).parent.parent
     sys.path.insert(0, str(project_root))
 
-from razdel import sentenize as rsentenize, tokenize as rtokenize
+from razdel import sentenize as rsentenize
+from razdel import tokenize as rtokenize
 
 from mawo_razdel import sentenize, tokenize
 
