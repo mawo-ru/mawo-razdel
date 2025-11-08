@@ -1,6 +1,5 @@
-
 import os
-from random import seed, sample
+from random import sample, seed
 
 
 def run(segment, test):
@@ -10,17 +9,13 @@ def run(segment, test):
 
 
 def data_path(filename):
-    return os.path.join(
-        os.path.dirname(__file__),
-        'data',
-        filename
-    )
+    return os.path.join(os.path.dirname(__file__), "data", filename)
 
 
 def load_lines(path):
     with open(path) as file:
         for line in file:
-            yield line.rstrip('\n')
+            yield line.rstrip("\n")
 
 
 def data_lines(path, size):

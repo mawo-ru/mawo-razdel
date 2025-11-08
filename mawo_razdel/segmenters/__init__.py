@@ -1,3 +1,2 @@
-
-from .sentenize import sentenize
-from .tokenize import tokenize
+from .sentenize import sentenize as sentenize
+from .tokenize import tokenize as tokenize

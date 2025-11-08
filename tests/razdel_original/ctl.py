@@ -1,61 +1,48 @@
-
-import sys
 import argparse
-from random import seed, sample as sample_
+import sys
+from random import sample as sample_
+from random import seed
 
-from razdel import (
-    sentenize,
-    tokenize
-)
+from razdel import sentenize, tokenize
 
-from .partition import (
-    parse_partitions,
-    format_partitions,
-    update_partitions
-)
-from .gen import (
-    generate_partition_precision_tests,
-    generate_partition_recall_tests
-)
+from .gen import generate_partition_precision_tests, generate_partition_recall_tests
+from .partition import format_partitions, parse_partitions, update_partitions
 from .zoo import (
-    dot_sentenize,
     deepmipt_sentenize,
-    nltk_sentenize,
-    segtok_sentenize,
+    dot_sentenize,
     moses_sentenize,
-
-    space_tokenize,
-    re_tokenize,
+    moses_tokenize,
+    mystem_tokenize,
+    nltk_sentenize,
     nltk_tokenize,
+    re_tokenize,
+    segtok_sentenize,
+    space_tokenize,
     spacy_tokenize,
     spacy_tokenize2,
-    mystem_tokenize,
-    moses_tokenize,
 )
 
-
 ZOO = {
-    'dot_sentenize': dot_sentenize,
-    'deepmipt_sentenize': deepmipt_sentenize,
-    'nltk_sentenize': nltk_sentenize,
-    'segtok_sentenize': segtok_sentenize,
-    'moses_sentenize': moses_sentenize,
-    'sentenize': sentenize,
-
-    'space_tokenize': space_tokenize,
-    're_tokenize': re_tokenize,
-    'nltk_tokenize': nltk_tokenize,
-    'spacy_tokenize': spacy_tokenize,
-    'spacy_tokenize2': spacy_tokenize2,
-    'mystem_tokenize': mystem_tokenize,
-    'moses_tokenize': moses_tokenize,
-    'tokenize': tokenize,
+    "dot_sentenize": dot_sentenize,
+    "deepmipt_sentenize": deepmipt_sentenize,
+    "nltk_sentenize": nltk_sentenize,
+    "segtok_sentenize": segtok_sentenize,
+    "moses_sentenize": moses_sentenize,
+    "sentenize": sentenize,
+    "space_tokenize": space_tokenize,
+    "re_tokenize": re_tokenize,
+    "nltk_tokenize": nltk_tokenize,
+    "spacy_tokenize": spacy_tokenize,
+    "spacy_tokenize2": spacy_tokenize2,
+    "mystem_tokenize": mystem_tokenize,
+    "moses_tokenize": moses_tokenize,
+    "tokenize": tokenize,
 }
 
 
 def stdin_lines():
     for line in sys.stdin:
-        yield line.rstrip('\n')
+        yield line.rstrip("\n")
 
 
 def stdout_lines(lines):
@@ -94,12 +81,12 @@ def sample(args):
 
 
 def show_(guess, etalon):
-    print('---etalon')
+    print("---etalon")
     for _ in etalon:
-        print('>', _.text)
-    print('---guess')
+        print(">", _.text)
+    print("---guess")
     for _ in guess:
-        print('>', _.text)
+        print(">", _.text)
     print()
 
 
@@ -133,29 +120,29 @@ def up(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(prog='razdel-ctl')
+    parser = argparse.ArgumentParser(prog="razdel-ctl")
     parser.set_defaults(function=None)
 
     subs = parser.add_subparsers()
 
-    sub = subs.add_parser('gen')
+    sub = subs.add_parser("gen")
     sub.set_defaults(function=gen)
-    sub.add_argument('--precision', action='store_true')
-    sub.add_argument('--recall', action='store_true')
+    sub.add_argument("--precision", action="store_true")
+    sub.add_argument("--recall", action="store_true")
 
-    sub = subs.add_parser('sample')
+    sub = subs.add_parser("sample")
     sub.set_defaults(function=sample)
-    sub.add_argument('size', type=int)
-    sub.add_argument('--seed', type=int, default=1)
+    sub.add_argument("size", type=int)
+    sub.add_argument("--seed", type=int, default=1)
 
-    sub = subs.add_parser('diff')
+    sub = subs.add_parser("diff")
     sub.set_defaults(function=diff)
-    sub.add_argument('segment', choices=ZOO)
-    sub.add_argument('--show', action='store_true')
+    sub.add_argument("segment", choices=ZOO)
+    sub.add_argument("--show", action="store_true")
 
-    sub = subs.add_parser('up')
+    sub = subs.add_parser("up")
     sub.set_defaults(function=up)
-    sub.add_argument('segment', choices=ZOO)
+    sub.add_argument("segment", choices=ZOO)
 
     args = sys.argv[1:]
     args = parser.parse_args(args)
@@ -168,5 +155,5 @@ def main():
         pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

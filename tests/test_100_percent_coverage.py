@@ -1,28 +1,47 @@
 """Тесты для достижения 100% покрытия кода"""
 
 import pytest
+
 from mawo_razdel import (
-    tokenize, sentenize,
-    Token, Sentence, Substring,
+    Sentence,
+    Substring,
+    Token,
+    sentenize,
+    tokenize,
 )
-from mawo_razdel.record import Record, cached_property
-from mawo_razdel.rule import Rule, FunctionRule, JOIN, SPLIT
-from mawo_razdel.split import Split, Splitter
-from mawo_razdel.segmenters.base import Segmenter, DebugSegmenter, safe_next
+from mawo_razdel.rule import JOIN, Rule
+from mawo_razdel.segmenters.base import safe_next
 from mawo_razdel.segmenters.sentenize import (
-    SentSegmenter, DebugSentSegmenter,
-    empty_side, no_space_prefix, lower_right, delimiter_right,
-    sokr_left, inside_pair_sokr, initials_left,
-    close_bound, close_quote, close_bracket,
-    list_item, dash_right,
-    SentSplit, SentSplitter,
+    DebugSentSegmenter,
+    SentSegmenter,
+    SentSplit,
+    close_bound,
+    close_bracket,
+    close_quote,
+    dash_right,
+    delimiter_right,
+    empty_side,
+    initials_left,
+    inside_pair_sokr,
+    list_item,
+    lower_right,
+    no_space_prefix,
+    sokr_left,
 )
 from mawo_razdel.segmenters.tokenize import (
-    TokenSegmenter, DebugTokenSegmenter,
-    DashRule, UnderscoreRule, FloatRule, FractionRule,
-    punct, other, yahoo,
-    Atom, TokenSplit, TokenSplitter,
+    Atom,
+    DashRule,
+    DebugTokenSegmenter,
+    FloatRule,
+    FractionRule,
+    TokenSegmenter,
+    TokenSplit,
+    UnderscoreRule,
+    other,
+    punct,
+    yahoo,
 )
+from mawo_razdel.split import Split
 
 
 class TestTokenClass:
@@ -69,6 +88,7 @@ class TestRecordMethods:
     def test_cached_property_get(self):
         """Тест cached_property.__get__ - первый вызов"""
         from mawo_razdel import tokenize
+
         # Используем реальный класс с cached_property
         result = list(tokenize("test word"))
         # Доступ к split.left_1 и другим cached properties
@@ -76,9 +96,9 @@ class TestRecordMethods:
 
     def test_cached_property_cached_hit(self):
         """Тест cached_property.__get__ - кэшированное значение"""
-        from mawo_razdel.segmenters.tokenize import TokenSplit, Atom
+        from mawo_razdel.segmenters.tokenize import Atom, TokenSplit
 
-        atom = Atom(0, 4, 'RU', 'test')
+        atom = Atom(0, 4, "RU", "test")
         split = TokenSplit([atom], "-", [atom])
 
         # Первый доступ к left_1 - вычисляется
@@ -133,7 +153,7 @@ class TestRecordMethods:
                 self.output.write(repr(obj))
 
             def breakable(self):
-                self.output.write('\n')
+                self.output.write("\n")
 
             def group(self, indent, open_text, close_text):
                 return MockGroup(self, open_text, close_text)
@@ -194,7 +214,7 @@ class TestSentSegmenterDebug:
         list(segmenter(text))
 
         # Проверяем что был вывод
-        captured = capsys.readouterr()
+        _ = capsys.readouterr()
         # Debug segmenter печатает информацию
         # (может быть пустым если все правила JOIN)
 
@@ -233,9 +253,9 @@ class TestSentenizeRules:
 
     def test_close_quote_generic_no_space(self):
         """close_quote с generic quote без пробела"""
-        split = SentSplit('test"', '"', 'next')
+        split = SentSplit('test"', '"', "next")
         # Симулируем отсутствие пробела
-        result = close_quote(split)
+        _ = close_quote(split)
         # Должно проверить close_bound
 
     def test_dash_right_no_dash(self):
@@ -267,25 +287,25 @@ class TestTokenSplitProperties:
 
     def test_left_2_none(self):
         """left_2 когда только один элемент"""
-        atom1 = Atom(0, 1, 'RU', 'a')
+        atom1 = Atom(0, 1, "RU", "a")
         split = TokenSplit([atom1], "", [atom1])
         assert split.left_2 is None
 
     def test_left_3_none(self):
         """left_3 когда меньше 3 элементов"""
-        atom1 = Atom(0, 1, 'RU', 'a')
+        atom1 = Atom(0, 1, "RU", "a")
         split = TokenSplit([atom1], "", [atom1])
         assert split.left_3 is None
 
     def test_right_2_none(self):
         """right_2 когда только один элемент"""
-        atom1 = Atom(0, 1, 'RU', 'a')
+        atom1 = Atom(0, 1, "RU", "a")
         split = TokenSplit([atom1], "", [atom1])
         assert split.right_2 is None
 
     def test_right_3_none(self):
         """right_3 когда меньше 3 элементов"""
-        atom1 = Atom(0, 1, 'RU', 'a')
+        atom1 = Atom(0, 1, "RU", "a")
         split = TokenSplit([atom1], "", [atom1])
         assert split.right_3 is None
 
@@ -296,8 +316,8 @@ class TestTokenizeRules:
     def test_dash_rule_no_delimiter(self):
         """DashRule когда делимитер не дефис"""
         rule = DashRule()
-        atom1 = Atom(0, 1, 'RU', 'a')
-        atom2 = Atom(2, 3, 'RU', 'b')
+        atom1 = Atom(0, 1, "RU", "a")
+        atom2 = Atom(2, 3, "RU", "b")
         split = TokenSplit([atom1], ".", [atom2])
         result = rule(split)
         assert result is None
@@ -305,17 +325,17 @@ class TestTokenizeRules:
     def test_underscore_rule_punct(self):
         """UnderscoreRule с пунктуацией"""
         rule = UnderscoreRule()
-        atom_punct = Atom(0, 1, 'PUNCT', '.')
-        atom_ru = Atom(2, 3, 'RU', 'a')
+        atom_punct = Atom(0, 1, "PUNCT", ".")
+        atom_ru = Atom(2, 3, "RU", "a")
         split = TokenSplit([atom_punct], "_", [atom_ru])
-        result = rule(split)
+        _ = rule(split)
         # Должно вернуть None т.к. один из них PUNCT
 
     def test_float_rule_not_int(self):
         """FloatRule когда не числа"""
         rule = FloatRule()
-        atom1 = Atom(0, 1, 'RU', 'a')
-        atom2 = Atom(2, 3, 'RU', 'b')
+        atom1 = Atom(0, 1, "RU", "a")
+        atom2 = Atom(2, 3, "RU", "b")
         split = TokenSplit([atom1], ".", [atom2])
         result = rule(split)
         assert result is None
@@ -323,31 +343,31 @@ class TestTokenizeRules:
     def test_fraction_rule_not_int(self):
         """FractionRule когда не числа"""
         rule = FractionRule()
-        atom1 = Atom(0, 1, 'RU', 'a')
-        atom2 = Atom(2, 3, 'RU', 'b')
+        atom1 = Atom(0, 1, "RU", "a")
+        atom2 = Atom(2, 3, "RU", "b")
         split = TokenSplit([atom1], "/", [atom2])
         result = rule(split)
         assert result is None
 
     def test_punct_rule_no_match(self):
         """punct когда типы не PUNCT"""
-        atom1 = Atom(0, 1, 'RU', 'a')
-        atom2 = Atom(2, 3, 'RU', 'b')
+        atom1 = Atom(0, 1, "RU", "a")
+        atom2 = Atom(2, 3, "RU", "b")
         split = TokenSplit([atom1], "-", [atom2])
         result = punct(split)
         assert result is None
 
     def test_other_left_other_right_ru(self):
         """other rule: OTHER слева, RU справа"""
-        atom1 = Atom(0, 1, 'OTHER', 'Δ')
-        atom2 = Atom(1, 2, 'RU', 'а')
+        atom1 = Atom(0, 1, "OTHER", "Δ")
+        atom2 = Atom(1, 2, "RU", "а")
         split = TokenSplit([atom1], "", [atom2])
         result = other(split)
         assert result == JOIN
 
     def test_yahoo_not_yahoo(self):
         """yahoo когда не yahoo"""
-        atom1 = Atom(0, 5, 'LAT', 'google')
+        atom1 = Atom(0, 5, "LAT", "google")
         split = TokenSplit([atom1], "!", [atom1])
         result = yahoo(split)
         assert result is None
@@ -362,9 +382,9 @@ class TestDebugSegmenter:
 
         # Используем debug режим
         text = "test-word"
-        result = list(tok_impl.debug(text))
+        _ = list(tok_impl.debug(text))
 
-        captured = capsys.readouterr()
+        _ = capsys.readouterr()
         # Debug должен печатать информацию о split
 
 
@@ -416,6 +436,7 @@ class TestMainAPI:
     def test_tokenize_api(self):
         """Тест tokenize() из главного модуля"""
         from mawo_razdel import tokenize as main_tokenize
+
         result = list(main_tokenize("привет мир"))
         assert len(result) == 2
         assert result[0].text == "привет"
@@ -424,6 +445,7 @@ class TestMainAPI:
     def test_sentenize_api(self):
         """Тест sentenize() из главного модуля"""
         from mawo_razdel import sentenize as main_sentenize
+
         result = list(main_sentenize("Привет. Мир."))
         assert len(result) == 2
         assert "Привет" in result[0].text
@@ -547,16 +569,16 @@ class TestMoreTokenizeRules:
 
     def test_other_ru_left_other_right(self):
         """other rule: RU слева, OTHER справа"""
-        atom1 = Atom(0, 1, 'RU', 'а')
-        atom2 = Atom(1, 2, 'OTHER', 'Δ')
+        atom1 = Atom(0, 1, "RU", "а")
+        atom2 = Atom(1, 2, "OTHER", "Δ")
         split = TokenSplit([atom1], "", [atom2])
         result = other(split)
         assert result == JOIN
 
     def test_yahoo_match(self):
         """yahoo когда yahoo!"""
-        atom1 = Atom(0, 5, 'LAT', 'yahoo')
-        atom2 = Atom(5, 6, 'PUNCT', '!')
+        atom1 = Atom(0, 5, "LAT", "yahoo")
+        atom2 = Atom(5, 6, "PUNCT", "!")
         split = TokenSplit([atom1], "", [atom2])
         result = yahoo(split)
         assert result == JOIN
@@ -575,13 +597,13 @@ class TestCoverageMissingLines:
     def test_close_quote_generic_no_space(self):
         """close_quote с генерической кавычкой без пробела (строки 181-184)"""
         text = 'Он сказал "привет"в комнату'
-        result = list(sentenize(text))
+        _ = list(sentenize(text))
         # Кавычка без пробела
 
     def test_dash_right_lowercase(self):
         """dash_right с lowercase справа (строка 235)"""
         text = "Слово – начало предложения"
-        result = list(sentenize(text))
+        _ = list(sentenize(text))
         # Проверяем что тире с lowercase
 
     def test_left_space_suffix_property(self):
@@ -601,27 +623,27 @@ class TestCoverageMissingLines:
     def test_dash_rule_punct_return(self):
         """DashRule return None когда PUNCT (строка 99)"""
         text = ".-word"
-        result = list(tokenize(text))
+        _ = list(tokenize(text))
         # Точка - PUNCT, должно разделиться
 
     def test_underscore_rule_punct_return(self):
         """UnderscoreRule return None когда PUNCT (строка 111)"""
         text = "._word"
-        result = list(tokenize(text))
+        _ = list(tokenize(text))
         # Точка - PUNCT, должно разделиться
 
     def test_other_special_chars(self):
         """other function с спецсимволами (строка 160)"""
         text = "α&β"
-        result = list(tokenize(text))
+        _ = list(tokenize(text))
         # Греческие буквы + спецсимвол
 
     def test_token_split_left_3(self):
         """Доступ к left_3 property (строка 228)"""
-        atom1 = Atom(0, 1, 'RU', 'а')
-        atom2 = Atom(1, 2, 'RU', 'б')
-        atom3 = Atom(2, 3, 'RU', 'в')
-        atom4 = Atom(3, 4, 'RU', 'г')
+        atom1 = Atom(0, 1, "RU", "а")
+        atom2 = Atom(1, 2, "RU", "б")
+        atom3 = Atom(2, 3, "RU", "в")
+        atom4 = Atom(3, 4, "RU", "г")
         split = TokenSplit([atom1, atom2, atom3, atom4], "", [atom1])
         # Доступ к left_3
         val = split.left_3
@@ -629,10 +651,10 @@ class TestCoverageMissingLines:
 
     def test_token_split_right_3(self):
         """Доступ к right_3 property (строка 242)"""
-        atom1 = Atom(0, 1, 'RU', 'а')
-        atom2 = Atom(1, 2, 'RU', 'б')
-        atom3 = Atom(2, 3, 'RU', 'в')
-        atom4 = Atom(3, 4, 'RU', 'г')
+        atom1 = Atom(0, 1, "RU", "а")
+        atom2 = Atom(1, 2, "RU", "б")
+        atom3 = Atom(2, 3, "RU", "в")
+        atom4 = Atom(3, 4, "RU", "г")
         split = TokenSplit([atom1], "", [atom1, atom2, atom3, atom4])
         # Доступ к right_3 (индекс 2, третий элемент)
         val = split.right_3
@@ -669,13 +691,13 @@ class TestCoverageMissingLines:
     def test_generic_quote_without_space(self):
         """Тест generic quote без пробела слева (строки 181-184)"""
         text = 'Слово"начало" текст'
-        result = list(sentenize(text))
+        _ = list(sentenize(text))
         # Кавычка без пробела
 
     def test_dash_before_lowercase_word(self):
         """Тест тире перед lowercase словом (строка 235)"""
         text = "Текст – слово продолжение"
-        result = list(sentenize(text))
+        _ = list(sentenize(text))
         # Тире перед lowercase - не разделяет
 
 

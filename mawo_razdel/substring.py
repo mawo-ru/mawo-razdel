@@ -1,9 +1,8 @@
-
 from .record import Record
 
 
 class Substring(Record):
-    __attributes__ = ['start', 'stop', 'text']
+    __attributes__ = ["start", "stop", "text"]
 
     def __init__(self, start, stop, text):
         self.start = start

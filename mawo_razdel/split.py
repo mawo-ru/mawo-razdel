@@ -1,9 +1,8 @@
-
 from .record import Record
 
 
 class Split(Record):
-    __attributes__ = ['left', 'delimiter', 'right', 'buffer']
+    __attributes__ = ["left", "delimiter", "right", "buffer"]
 
     def __init__(self, left, delimiter, right, buffer=None):
         self.left = left

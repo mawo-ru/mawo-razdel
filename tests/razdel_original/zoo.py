@@ -1,6 +1,5 @@
-
-import re
 import logging
+import re
 from contextlib import contextmanager
 
 from razdel.substring import find_substrings
@@ -8,7 +7,7 @@ from razdel.substring import find_substrings
 
 def dot_sentenize_(text):
     previous = 0
-    for match in re.finditer(r'([.?!…])\s+', text, re.U):
+    for match in re.finditer(r"([.?!…])\s+", text, re.U):
         delimiter = match.group(1)
         start = match.start()
         yield text[previous:start] + delimiter
@@ -45,7 +44,7 @@ def deepmipt_sentenize(text):
 def nltk_sentenize(text):
     from nltk import sent_tokenize
 
-    chunks = sent_tokenize(text, 'russian')
+    chunks = sent_tokenize(text, "russian")
     return find_substrings(chunks, text)
 
 
@@ -64,17 +63,17 @@ def moses_sentenize(text):
 
     global MOSES_SENT
     if not MOSES_SENT:
-        MOSES_SENT = MosesSentenceSplitter('ru')
+        MOSES_SENT = MosesSentenceSplitter("ru")
 
     chunks = MOSES_SENT([text])
     return find_substrings(chunks, text)
 
 
-TOKEN = re.compile(r'([^\W\d]+|\d+|[^\w\s])', re.U)
+TOKEN = re.compile(r"([^\W\d]+|\d+|[^\w\s])", re.U)
 
 
 def space_tokenize(text):
-    chunks = re.split(r'\s+', text)
+    chunks = re.split(r"\s+", text)
     return find_substrings(chunks, text)
 
 
@@ -86,7 +85,7 @@ def re_tokenize(text):
 def nltk_tokenize(text):
     from nltk.tokenize import word_tokenize
 
-    chunks = word_tokenize(text, 'russian')
+    chunks = word_tokenize(text, "russian")
     return find_substrings(chunks, text)
 
 
@@ -110,18 +109,13 @@ NLP2 = None
 
 def spacy_tokenize2(text):
     from spacy.lang.ru import Russian
-    from spacy_russian_tokenizer import (
-        RussianTokenizer,
-        MERGE_PATTERNS,
-        SYNTAGRUS_RARE_CASES
-    )
+    from spacy_russian_tokenizer import MERGE_PATTERNS, SYNTAGRUS_RARE_CASES, RussianTokenizer
 
     global NLP2
     if not NLP2:
         NLP2 = Russian()
         NLP2.add_pipe(
-            RussianTokenizer(NLP2, MERGE_PATTERNS + SYNTAGRUS_RARE_CASES),
-            name='russian_tokenizer'
+            RussianTokenizer(NLP2, MERGE_PATTERNS + SYNTAGRUS_RARE_CASES), name="russian_tokenizer"
         )
 
     doc = NLP2(text)
@@ -142,7 +136,7 @@ MYSTEM = None
 
 def parse_mystem(data):
     for item in data:
-        text = item['text'].strip()
+        text = item["text"].strip()
         if text:
             yield text
 
@@ -152,12 +146,7 @@ def mystem_tokenize(text):
 
     global MYSTEM
     if not MYSTEM:
-        MYSTEM = Mystem(
-            grammar_info=False,
-            entire_input=True,
-            disambiguation=False,
-            weight=False
-        )
+        MYSTEM = Mystem(grammar_info=False, entire_input=True, disambiguation=False, weight=False)
 
     data = MYSTEM.analyze(text)
     chunks = parse_mystem(data)
@@ -172,10 +161,10 @@ def moses_tokenize(text):
 
     global MOSES_TOK
     if not MOSES_TOK:
-        MOSES_TOK = MosesTokenizer('ru')
+        MOSES_TOK = MosesTokenizer("ru")
         # disable
-        MOSES_TOK.argv.append('-no-escape')  # " -> &quot;
-        MOSES_TOK.argv.remove('-a')  # - -> @-@
+        MOSES_TOK.argv.append("-no-escape")  # " -> &quot;
+        MOSES_TOK.argv.remove("-a")  # - -> @-@
         MOSES_TOK.restart()
 
     chunks = MOSES_TOK(text)

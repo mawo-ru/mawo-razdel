@@ -1,32 +1,24 @@
-
 import re
 
 from mawo_razdel import Substring
 
-
-FILL = ' '
-FILL_PATTERN = re.compile(r'^\s*$')
+FILL = " "
+FILL_PATTERN = re.compile(r"^\s*$")
 
 
 class Record:
     """Simple base class for records."""
+
     __attributes__ = []
 
     def __repr__(self):
         name = self.__class__.__name__
-        args = ', '.join(
-            '{0}={1!r}'.format(name, getattr(self, name))
-            for name in self.__attributes__
-        )
-        return '{0}({1})'.format(name, args)
+        args = ", ".join(f"{name}={getattr(self, name)!r}" for name in self.__attributes__)
+        return f"{name}({args})"
 
     def __eq__(self, other):
-        return (
-            type(self) == type(other)
-            and all(
-                getattr(self, name) == getattr(other, name)
-                for name in self.__attributes__
-            )
+        return type(self) == type(other) and all(
+            getattr(self, name) == getattr(other, name) for name in self.__attributes__
         )
 
     def __ne__(self, other):
@@ -34,7 +26,7 @@ class Record:
 
 
 class Partition(Record):
-    __attributes__ = ['chunks']
+    __attributes__ = ["chunks"]
 
     is_fill = FILL_PATTERN.match
 
@@ -43,7 +35,7 @@ class Partition(Record):
 
     @property
     def text(self):
-        return ''.join(self.chunks)
+        return "".join(self.chunks)
 
     @property
     def substrings(self):
@@ -71,11 +63,8 @@ def substring_chunks(substrings, fill=FILL):
         previous = substring.stop
 
 
-SEP = '|'
-ESCAPE = [
-    (SEP, r'\|'),
-    ('\n', r'\n')
-]
+SEP = "|"
+ESCAPE = [(SEP, r"\|"), ("\n", r"\n")]
 
 
 def escape_chunk(chunk):

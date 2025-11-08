@@ -1,59 +1,40 @@
-
 import re
 
 from ..record import cached_property
-from ..rule import (
-    JOIN,
-    FunctionRule
-)
+from ..rule import JOIN, FunctionRule
 from ..split import (
     Split,
     Splitter,
 )
-
-from .base import (
-    Segmenter,
-    DebugSegmenter
-)
-from .sokr import (
-    HEAD_SOKRS,
-    SOKRS,
-
-    HEAD_PAIR_SOKRS,
-    PAIR_SOKRS,
-
-    INITIALS
-)
+from .base import DebugSegmenter, Segmenter
 from .punct import (
-    ENDINGS,
-    DASHES,
-
-    QUOTES,
-    CLOSE_QUOTES,
-    GENERIC_QUOTES,
     CLOSE_BRACKETS,
-
+    CLOSE_QUOTES,
+    DASHES,
+    ENDINGS,
+    GENERIC_QUOTES,
+    QUOTES,
     SMILES,
 )
+from .sokr import HEAD_PAIR_SOKRS, HEAD_SOKRS, INITIALS, PAIR_SOKRS, SOKRS
 
+SPACE_SUFFIX = re.compile(r"\s$", re.U)
+SPACE_PREFIX = re.compile(r"^\s", re.U)
 
-SPACE_SUFFIX = re.compile(r'\s$', re.U)
-SPACE_PREFIX = re.compile(r'^\s', re.U)
+TOKEN = re.compile(r"([^\W\d]+|\d+|[^\w\s])", re.U)
+FIRST_TOKEN = re.compile(r"^\s*([^\W\d]+|\d+|[^\w\s])", re.U)
+LAST_TOKEN = re.compile(r"([^\W\d]+|\d+|[^\w\s])\s*$", re.U)
+WORD = re.compile(r"([^\W\d]+|\d+)", re.U)
+PAIR_SOKR = re.compile(r"(\w)\s*\.\s*(\w)\s*$", re.U)
+INT_SOKR = re.compile(r"\d+\s*-?\s*(\w+)\s*$", re.U)
 
-TOKEN = re.compile(r'([^\W\d]+|\d+|[^\w\s])', re.U)
-FIRST_TOKEN = re.compile(r'^\s*([^\W\d]+|\d+|[^\w\s])', re.U)
-LAST_TOKEN = re.compile(r'([^\W\d]+|\d+|[^\w\s])\s*$', re.U)
-WORD = re.compile(r'([^\W\d]+|\d+)', re.U)
-PAIR_SOKR = re.compile(r'(\w)\s*\.\s*(\w)\s*$', re.U)
-INT_SOKR = re.compile(r'\d+\s*-?\s*(\w+)\s*$', re.U)
-
-ROMAN = re.compile(r'^[IVXML]+$', re.U)
-BULLET_CHARS = set('§абвгдеabcdef')
-BULLET_BOUNDS = '.)'
+ROMAN = re.compile(r"^[IVXML]+$", re.U)
+BULLET_CHARS = set("§абвгдеabcdef")
+BULLET_BOUNDS = ".)"
 BULLET_SIZE = 20
 
-DELIMITERS = ENDINGS + ';' + GENERIC_QUOTES + CLOSE_QUOTES + CLOSE_BRACKETS
-SMILE_PREFIX = re.compile(r'^\s*' + SMILES, re.U)
+DELIMITERS = ENDINGS + ";" + GENERIC_QUOTES + CLOSE_QUOTES + CLOSE_BRACKETS
+SMILE_PREFIX = re.compile(r"^\s*" + SMILES, re.U)
 
 
 def is_lower_alpha(token):
@@ -110,7 +91,7 @@ def is_sokr(token):
 
 
 def sokr_left(split):
-    if split.delimiter != '.':
+    if split.delimiter != ".":
         return
 
     right = split.right_token
@@ -136,7 +117,7 @@ def sokr_left(split):
 
 
 def inside_pair_sokr(split):
-    if split.delimiter != '.':
+    if split.delimiter != ".":
         return
 
     left = split.left_token.lower()
@@ -146,7 +127,7 @@ def inside_pair_sokr(split):
 
 
 def initials_left(split):
-    if split.delimiter != '.':
+    if split.delimiter != ".":
         return
 
     left = split.left_token
@@ -292,14 +273,11 @@ class SentSplit(Split):
             return match.group(1)
 
 
-DELIMITER = '({smiles}|[{delimiters}])'.format(
-    delimiters=re.escape(DELIMITERS),
-    smiles=SMILES
-)
+DELIMITER = f"({SMILES}|[{re.escape(DELIMITERS)}])"
 
 
 class SentSplitter(Splitter):
-    __attributes__ = ['pattern', 'window']
+    __attributes__ = ["pattern", "window"]
 
     def __init__(self, pattern=DELIMITER, window=10):
         self.pattern = pattern
@@ -317,8 +295,8 @@ class SentSplitter(Splitter):
             stop = match.end()
             delimiter = match.group(1)
             yield text[previous:start]
-            left = text[max(0, start - self.window):start]
-            right = text[stop:stop + self.window]
+            left = text[max(0, start - self.window) : start]
+            right = text[stop : stop + self.window]
             yield SentSplit(left, delimiter, right)
             previous = stop
         yield text[previous:]
@@ -331,23 +309,22 @@ class SentSplitter(Splitter):
 ########
 
 
-RULES = [FunctionRule(_) for _ in [
-    empty_side,
-    no_space_prefix,
-    lower_right,
-    delimiter_right,
-
-    sokr_left,
-    inside_pair_sokr,
-    initials_left,
-
-    list_item,
-
-    close_quote,
-    close_bracket,
-
-    dash_right,
-]]
+RULES = [
+    FunctionRule(_)
+    for _ in [
+        empty_side,
+        no_space_prefix,
+        lower_right,
+        delimiter_right,
+        sokr_left,
+        inside_pair_sokr,
+        initials_left,
+        list_item,
+        close_quote,
+        close_bracket,
+        dash_right,
+    ]
+]
 
 
 class SentSegmenter(Segmenter):

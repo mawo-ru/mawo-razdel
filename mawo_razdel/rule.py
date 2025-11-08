@@ -1,9 +1,7 @@
-
 from .record import Record
 
-
-SPLIT = 'split'
-JOIN = 'join'
+SPLIT = "split"
+JOIN = "join"
 
 
 class Rule(Record):
@@ -14,7 +12,7 @@ class Rule(Record):
 
 
 class FunctionRule(Rule):
-    __attributes__ = ['name']
+    __attributes__ = ["name"]
 
     def __init__(self, function):
         self.name = function.__name__

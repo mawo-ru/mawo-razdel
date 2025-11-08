@@ -13,10 +13,8 @@ Features:
 from __future__ import annotations
 
 # Import original razdel implementation (ported)
-from .segmenters import (
-    sentenize as _original_sentenize,
-    tokenize as _original_tokenize
-)
+from .segmenters import sentenize as _original_sentenize
+from .segmenters import tokenize as _original_tokenize
 
 # Import classes from substring module
 from .substring import Substring

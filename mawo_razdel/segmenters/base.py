@@ -1,4 +1,3 @@
-
 from ..record import Record
 from ..rule import JOIN
 from ..substring import find_substrings
@@ -12,7 +11,7 @@ def safe_next(iter):
 
 
 class Segmenter(Record):
-    __attributes__ = ['split', 'rules']
+    __attributes__ = ["split", "rules"]
 
     def __init__(self, split, rules):
         self.split = split
@@ -51,9 +50,9 @@ class Segmenter(Record):
 
 class DebugSegmenter(Segmenter):
     def join(self, split):
-        print("{split.left!r} | {split.delimiter!r} | {split.right!r}".format(split=split))
+        print(f"{split.left!r} | {split.delimiter!r} | {split.right!r}")
         for rule in self.rules:
             action = rule(split)
             if action:
-                print('\t', action, rule.name)
+                print("\t", action, rule.name)
                 return action == JOIN

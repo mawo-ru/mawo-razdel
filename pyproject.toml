@@ -78,7 +78,15 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "B", "UP"]
-ignore = ["E501"]
+ignore = [
+    "E501",   # Длина строки - игнорируем
+    "E721",   # type() == type() вместо isinstance() - из оригинального razdel
+    "N801",   # cached_property - имя из оригинального razdel
+    "B008",   # Вызов функции в дефолтных аргументах - из оригинального razdel
+    "UP008",  # super(__class__, self) - из оригинального razdel для совместимости
+    "UP028",  # yield from - сохраняем оригинальный стиль
+    "UP031",  # % форматирование - из оригинального razdel
+]
 
 [tool.mypy]
 python_version = "3.10"

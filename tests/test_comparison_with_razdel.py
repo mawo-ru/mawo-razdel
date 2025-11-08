@@ -1,7 +1,8 @@
 """Тесты на совместимость с оригинальным razdel"""
 
 import pytest
-from mawo_razdel import tokenize, sentenize
+
+from mawo_razdel import sentenize, tokenize
 
 
 class TestTokenizationComparison:

@@ -1,55 +1,35 @@
-
 import re
 
-from ..record import (
-    Record,
-    cached_property
-)
-from ..rule import (
-    JOIN, SPLIT,
-    Rule,
-    FunctionRule
-)
+from ..record import Record, cached_property
+from ..rule import JOIN, SPLIT, FunctionRule, Rule
 from ..split import (
     Split,
     Splitter,
 )
+from .base import DebugSegmenter, Segmenter, safe_next
+from .punct import BRACKETS, DASHES, ENDINGS, QUOTES, SMILES
 
-from .base import (
-    safe_next,
-    Segmenter,
-    DebugSegmenter
-)
-from .punct import (
-    DASHES,
-    ENDINGS,
-    QUOTES,
-    BRACKETS,
+RU = "RU"
+LAT = "LAT"
+INT = "INT"
+PUNCT = "PUNCT"
+OTHER = "OTHER"
 
-    SMILES
-)
-
-
-RU = 'RU'
-LAT = 'LAT'
-INT = 'INT'
-PUNCT = 'PUNCT'
-OTHER = 'OTHER'
-
-PUNCTS = '\\/!#$%&*+,.:;<=>?@^_`|~№…' + DASHES + QUOTES + BRACKETS
+PUNCTS = "\\/!#$%&*+,.:;<=>?@^_`|~№…" + DASHES + QUOTES + BRACKETS
 
 ATOM = re.compile(
-    r'''
+    r"""
     (?P<RU>[а-яё]+)
     |(?P<LAT>[a-z]+)
     |(?P<INT>\d+)
     |(?P<PUNCT>[%s])
     |(?P<OTHER>\S)
-    ''' % re.escape(PUNCTS),
-    re.I | re.U | re.X
+    """
+    % re.escape(PUNCTS),
+    re.I | re.U | re.X,
 )
 
-SMILE = re.compile(r'^' + SMILES + '$', re.U)
+SMILE = re.compile(r"^" + SMILES + "$", re.U)
 
 
 ##########
@@ -59,7 +39,9 @@ SMILE = re.compile(r'^' + SMILES + '$', re.U)
 ######
 
 
-def split_space(split):  # pragma: no cover - мертвый код, сохранен для совместимости с оригинальным razdel
+def split_space(
+    split,
+):  # pragma: no cover - мертвый код, сохранен для совместимости с оригинальным razdel
     """Мертвый код из оригинального razdel - не используется в RULES.
 
     Эта функция должна была разделять токены, когда между ними есть разделитель.
@@ -97,7 +79,7 @@ class Rule2112(Rule):
 
 
 class DashRule(Rule2112):
-    name = 'dash'
+    name = "dash"
 
     def delimiter(self, delimiter):
         return delimiter in DASHES
@@ -109,10 +91,10 @@ class DashRule(Rule2112):
 
 
 class UnderscoreRule(Rule2112):
-    name = 'underscore'
+    name = "underscore"
 
     def delimiter(self, delimiter):
-        return delimiter == '_'
+        return delimiter == "_"
 
     def rule(self, left, right):
         if left.type == PUNCT or right.type == PUNCT:
@@ -121,10 +103,10 @@ class UnderscoreRule(Rule2112):
 
 
 class FloatRule(Rule2112):
-    name = 'float'
+    name = "float"
 
     def delimiter(self, delimiter):
-        return delimiter in '.,'
+        return delimiter in ".,"
 
     def rule(self, left, right):
         if left.type == INT and right.type == INT:
@@ -132,10 +114,10 @@ class FloatRule(Rule2112):
 
 
 class FractionRule(Rule2112):
-    name = 'fraction'
+    name = "fraction"
 
     def delimiter(self, delimiter):
-        return delimiter in '/\\'
+        return delimiter in "/\\"
 
     def rule(self, left, right):
         if left.type == INT and right.type == INT:
@@ -163,7 +145,7 @@ def punct(split):
         # ... ?!
         return JOIN
 
-    if left + right in ('--', '**'):
+    if left + right in ("--", "**"):
         # ***
         return JOIN
 
@@ -189,7 +171,7 @@ def other(split):
 
 
 def yahoo(split):
-    if split.left_1.normal == 'yahoo' and split.right == '!':
+    if split.left_1.normal == "yahoo" and split.right == "!":
         return JOIN
 
 
@@ -201,7 +183,7 @@ def yahoo(split):
 
 
 class Atom(Record):
-    __attributes__ = ['start', 'stop', 'type', 'text']
+    __attributes__ = ["start", "stop", "type", "text"]
 
     def __init__(self, start, stop, type, text):
         self.start = start
@@ -215,11 +197,7 @@ class TokenSplit(Split):
     def __init__(self, left, delimiter, right):
         self.left_atoms = left
         self.right_atoms = right
-        super(TokenSplit, self).__init__(
-            self.left_1.text,
-            delimiter,
-            self.right_1.text
-        )
+        super(TokenSplit, self).__init__(self.left_1.text, delimiter, self.right_1.text)
 
     @cached_property
     def left_1(self):
@@ -261,10 +239,7 @@ class TokenSplitter(Splitter):
             stop = match.end()
             type = match.lastgroup
             text = match.group(0)
-            yield Atom(
-                start, stop,
-                type, text
-            )
+            yield Atom(start, stop, type, text)
 
     def __call__(self, text):
         atoms = list(self.atoms(text))
@@ -272,9 +247,9 @@ class TokenSplitter(Splitter):
             atom = atoms[index]
             if index > 0:
                 previous = atoms[index - 1]
-                delimiter = text[previous.stop:atom.start]
-                left = atoms[max(0, index - self.window):index]
-                right = atoms[index:index + self.window]
+                delimiter = text[previous.stop : atom.start]
+                left = atoms[max(0, index - self.window) : index]
+                right = atoms[index : index + self.window]
                 yield TokenSplit(left, delimiter, right)
             yield atom.text
 
@@ -291,10 +266,8 @@ RULES = [
     UnderscoreRule(),
     FloatRule(),
     FractionRule(),
-
     FunctionRule(punct),
     FunctionRule(other),
-
     FunctionRule(yahoo),
 ]
 
