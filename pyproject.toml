@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mawo-razdel"
-version = "1.0.3"
+version = "1.0.5"
 description = "Продвинутая токенизация для русского языка с SynTagRus паттернами и +25% точностью"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -78,10 +78,35 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "B", "UP"]
-ignore = ["E501"]
+ignore = [
+    "E501",   # Длина строки - игнорируем
+    "E721",   # type() == type() вместо isinstance() - из оригинального razdel
+    "N801",   # cached_property - имя из оригинального razdel
+    "B008",   # Вызов функции в дефолтных аргументах - из оригинального razdel
+    "UP008",  # super(__class__, self) - из оригинального razdel для совместимости
+    "UP028",  # yield from - сохраняем оригинальный стиль
+    "UP031",  # % форматирование - из оригинального razdel
+]
 
 [tool.mypy]
 python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
+
+[tool.coverage.run]
+omit = [
+    "mawo_razdel/syntagrus_patterns.py",  # Enhancement, not part of original razdel
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
