@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mawo-razdel"
-version = "1.0.5"
+version = "1.0.6"
 description = "Продвинутая токенизация для русского языка с SynTagRus паттернами и +25% точностью"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -60,7 +60,7 @@ Issues = "https://github.com/mawo-ru/mawo-razdel/issues"
 Changelog = "https://github.com/mawo-ru/mawo-razdel/blob/main/CHANGELOG.md"
 
 [tool.setuptools]
-packages = ["mawo_razdel"]
+packages = ["mawo_razdel", "mawo_razdel.segmenters", "mawo_razdel.data"]
 
 [tool.setuptools.package-data]
 mawo_razdel = [
